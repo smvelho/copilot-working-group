@@ -38,7 +38,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         <div style={{ padding: '20px', textAlign: 'center' }}>
           <h2>Something went wrong</h2>
           <p>{this.state.error.message}</p>
-          <button onClick={this.reset}>Try again</button>
+          <button onClick={this.reset} aria-label="Retry after error">
+            Try again
+          </button>
         </div>
       );
     }

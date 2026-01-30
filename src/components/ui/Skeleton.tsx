@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties } from 'react';
 import styles from './Skeleton.module.css';
 
 interface SkeletonProps {
@@ -7,7 +7,6 @@ interface SkeletonProps {
   variant?: 'text' | 'rectangular' | 'circular';
   className?: string;
   style?: CSSProperties;
-  children?: ReactNode;
 }
 
 export const Skeleton = ({

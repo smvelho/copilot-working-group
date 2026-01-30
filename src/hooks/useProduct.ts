@@ -5,7 +5,12 @@ import { productService } from '../services';
 export const productQueryOptions = (id: number) =>
   queryOptions({
     queryKey: ['product', id],
-    queryFn: () => productService.getProduct(id),
+    queryFn: () => {
+      if (isNaN(id)) {
+        throw new Error('Invalid product ID');
+      }
+      return productService.getProduct(id);
+    },
   });
 
 export const useProduct = () => {

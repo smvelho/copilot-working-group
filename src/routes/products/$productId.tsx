@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { productQueryOptions } from '../../hooks/useProduct';
 import { Layout } from '../../components/ui/Layout';
 import { Header } from '../../components/Header';
@@ -14,18 +15,30 @@ const ProductPage = () => {
         <Header />
       </Layout.Header>
       <Layout.Main>
-        <ErrorBoundary
-          fallback={(error, reset) => (
-            <div style={{ padding: '20px', textAlign: 'center' }}>
-              <p>Error loading product: {error.message}</p>
-              <button onClick={reset}>Try again</button>
-            </div>
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              fallback={(error, resetError) => (
+                <div style={{ padding: '20px', textAlign: 'center' }}>
+                  <p>Error loading product: {error.message}</p>
+                  <button
+                    onClick={() => {
+                      reset();
+                      resetError();
+                    }}
+                    aria-label="Retry loading product"
+                  >
+                    Try again
+                  </button>
+                </div>
+              )}
+            >
+              <Suspense fallback={<ProductDetailSkeleton />}>
+                <ProductDetail />
+              </Suspense>
+            </ErrorBoundary>
           )}
-        >
-          <Suspense fallback={<ProductDetailSkeleton />}>
-            <ProductDetail />
-          </Suspense>
-        </ErrorBoundary>
+        </QueryErrorResetBoundary>
       </Layout.Main>
     </Layout>
   );
@@ -33,6 +46,11 @@ const ProductPage = () => {
 
 export const Route = createFileRoute('/products/$productId')({
   component: ProductPage,
-  loader: ({ context: { queryClient }, params: { productId } }) =>
-    queryClient.ensureQueryData(productQueryOptions(Number(productId))),
+  loader: ({ context: { queryClient }, params: { productId } }) => {
+    const id = Number(productId);
+    if (isNaN(id)) {
+      throw new Error('Invalid product ID');
+    }
+    return queryClient.ensureQueryData(productQueryOptions(id));
+  },
 });

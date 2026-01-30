@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { useProducts, productsQueryOptions } from '../hooks/useProducts';
 import { Layout } from '../components/ui/Layout';
 import { Header } from '../components/Header';
@@ -8,9 +9,19 @@ import { ProductCard } from '../components/ProductCard';
 import { ErrorBoundary } from '../components/ui/ErrorBoundary';
 import { ProductGridSkeleton } from '../components/ui/Skeleton';
 
-const IndexPage = () => {
+const ProductsContent = () => {
   const { data } = useProducts();
 
+  return (
+    <ProductGrid>
+      {data.products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </ProductGrid>
+  );
+};
+
+const IndexPage = () => {
   return (
     <Layout>
       <Layout.Header>
@@ -19,22 +30,30 @@ const IndexPage = () => {
       <Layout.Main>
         <h1>Featured Products</h1>
 
-        <ErrorBoundary
-          fallback={(error, reset) => (
-            <div style={{ padding: '20px', textAlign: 'center' }}>
-              <p>Error loading products: {error.message}</p>
-              <button onClick={reset}>Try again</button>
-            </div>
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              fallback={(error, resetError) => (
+                <div style={{ padding: '20px', textAlign: 'center' }}>
+                  <p>Error loading products: {error.message}</p>
+                  <button
+                    onClick={() => {
+                      reset();
+                      resetError();
+                    }}
+                    aria-label="Retry loading products"
+                  >
+                    Try again
+                  </button>
+                </div>
+              )}
+            >
+              <Suspense fallback={<ProductGridSkeleton />}>
+                <ProductsContent />
+              </Suspense>
+            </ErrorBoundary>
           )}
-        >
-          <Suspense fallback={<ProductGridSkeleton />}>
-            <ProductGrid>
-              {data.products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </ProductGrid>
-          </Suspense>
-        </ErrorBoundary>
+        </QueryErrorResetBoundary>
       </Layout.Main>
     </Layout>
   );
