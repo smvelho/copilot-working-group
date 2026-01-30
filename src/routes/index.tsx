@@ -1,13 +1,27 @@
+import { Suspense } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
-import { useProducts } from '../hooks/useProducts';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
+import { useProducts, productsQueryOptions } from '../hooks/useProducts';
 import { Layout } from '../components/ui/Layout';
 import { Header } from '../components/Header';
 import { ProductGrid } from '../components/ProductGrid';
 import { ProductCard } from '../components/ProductCard';
+import { ErrorBoundary } from '../components/ui/ErrorBoundary';
+import { ProductGridSkeleton } from '../components/ui/Skeleton';
+
+const ProductsContent = () => {
+  const { data } = useProducts();
+
+  return (
+    <ProductGrid>
+      {data.products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </ProductGrid>
+  );
+};
 
 const IndexPage = () => {
-  const { data, isLoading, error } = useProducts();
-
   return (
     <Layout>
       <Layout.Header>
@@ -16,17 +30,30 @@ const IndexPage = () => {
       <Layout.Main>
         <h1>Featured Products</h1>
 
-        {isLoading && <p>Loading products...</p>}
-
-        {error && <p>Error loading products: {error.message}</p>}
-
-        {data && (
-          <ProductGrid>
-            {data.products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </ProductGrid>
-        )}
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              fallback={(error, resetError) => (
+                <div style={{ padding: '20px', textAlign: 'center' }}>
+                  <p>Error loading products: {error.message}</p>
+                  <button
+                    onClick={() => {
+                      reset();
+                      resetError();
+                    }}
+                    aria-label="Retry loading products"
+                  >
+                    Try again
+                  </button>
+                </div>
+              )}
+            >
+              <Suspense fallback={<ProductGridSkeleton />}>
+                <ProductsContent />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>
       </Layout.Main>
     </Layout>
   );
@@ -34,4 +61,6 @@ const IndexPage = () => {
 
 export const Route = createFileRoute('/')({
   component: IndexPage,
+  loader: ({ context: { queryClient } }) =>
+    queryClient.ensureQueryData(productsQueryOptions()),
 });

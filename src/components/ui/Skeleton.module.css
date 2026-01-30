@@ -1,0 +1,33 @@
+.skeleton {
+  animation: pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 0%,
+    #e0e0e0 50%,
+    #f0f0f0 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 4px;
+}
+
+.skeleton.text {
+  height: 1em;
+  border-radius: 4px;
+}
+
+.skeleton.rectangular {
+  border-radius: 8px;
+}
+
+.skeleton.circular {
+  border-radius: 50%;
+}
+
+@keyframes pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

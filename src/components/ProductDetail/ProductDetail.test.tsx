@@ -21,12 +21,10 @@ const mockProduct: Product = {
   images: ['https://example.com/image1.jpg', 'https://example.com/image2.jpg'],
 };
 
-// Mock the hooks
+// Mock the hooks - useSuspenseQuery no longer returns isLoading or error
 vi.mock('../../hooks/useProduct', () => ({
   useProduct: () => ({
     data: mockProduct,
-    isLoading: false,
-    error: null,
   }),
 }));
 
