@@ -20,16 +20,10 @@ echo "📦 npm version: $(npm --version)"
 echo "📥 Installing dependencies..."
 npm install
 
-# Verify installation
-if [ $? -eq 0 ]; then
-    echo "✅ Dependencies installed successfully!"
-    echo ""
-    echo "🎉 Setup complete! You can now:"
-    echo "  - Run 'npm run dev' to start the development server"
-    echo "  - Run 'npm run test' to run tests"
-    echo "  - Run 'npm run lint' to check code quality"
-    echo "  - Run 'npm run build' to build for production"
-else
-    echo "❌ Failed to install dependencies"
-    exit 1
-fi
+echo "✅ Dependencies installed successfully!"
+echo ""
+echo "🎉 Setup complete! You can now:"
+echo "  - Run 'npm run dev' to start the development server"
+echo "  - Run 'npm run test' to run tests"
+echo "  - Run 'npm run lint' to check code quality"
+echo "  - Run 'npm run build' to build for production"

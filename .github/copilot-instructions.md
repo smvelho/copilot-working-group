@@ -30,7 +30,14 @@ Type checking is performed automatically during the build process (`npm run buil
 
 ## Project Structure
 - `/src` - Application source code
-- `/assets` - Static assets like images
+  - `/components` - React components (Header, ProductCard, ProductGrid, etc.)
+  - `/contexts` - React contexts for state management
+  - `/hooks` - Custom React hooks
+  - `/routes` - Route definitions and page components
+  - `/services` - API services and business logic
+  - `/test` - Test utilities and setup
+  - `/types` - TypeScript type definitions
+- `/assets/images` - Static image assets
 - `vite.config.ts` - Vite configuration
 - `eslint.config.js` - ESLint configuration
 - `tsconfig.*.json` - TypeScript configuration files
