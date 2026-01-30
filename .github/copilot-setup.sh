@@ -12,6 +12,12 @@ if ! command -v npm &> /dev/null; then
     exit 1
 fi
 
+# Check if node is installed
+if ! command -v node &> /dev/null; then
+    echo "❌ Node.js is not installed. Please install Node.js first."
+    exit 1
+fi
+
 # Display Node.js and npm versions
 echo "📦 Node.js version: $(node --version)"
 echo "📦 npm version: $(npm --version)"
